@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Quản lý xoay vòng vốn | Xanh mát - Hiện đại</title>
+    <!-- Google Font K2D -->
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'K2D', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #D4F1F9 0%, #A2D9F5 100%);
+            min-height: 100vh;
+            padding: 20px 16px;
+        }
+
+        /* App container - xanh dương nhạt, trong trẻo */
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px rgba(0, 80, 100, 0.15);
+            overflow: hidden;
+            padding: 18px 20px 32px;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Header - gradient xanh dương - xanh ngọc */
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0B5E7E, #1B8A6B, #2C9A6E);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            display: inline-block;
+        }
+        .header p {
+            color: #1F6E8C;
+            font-weight: 500;
+            margin-top: 6px;
+            background: #E0F2FE;
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+        }
+
+        /* Tab - xanh dương nhẹ */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 28px 0 20px;
+            border-bottom: 2px solid #B8DFF0;
+            padding-bottom: 12px;
+        }
+        .tab-btn {
+            background: #EBF7FB;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1F6E8C;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .tab-btn i {
+            font-size: 1.1rem;
+        }
+        .tab-btn.active {
+            background: linear-gradient(105deg, #2C9A6E, #1F8A5C);
+            color: white;
+            box-shadow: 0 6px 14px rgba(31, 138, 92, 0.3);
+            border: none;
+        }
+        .tab-btn:hover:not(.active) {
+            background: #CAEAF3;
+            transform: translateY(-2px);
+        }
+
+        /* Panel animation */
+        .tab-panel {
+            display: none;
+            animation: fadeSlide 0.25s ease;
+        }
+        .tab-panel.active-panel {
+            display: block;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        /* Card style - xanh ánh sáng */
+        .card {
+            background: #FFFFFF;
+            border-radius: 32px;
+            padding: 20px 18px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 20px rgba(0, 70, 80, 0.08);
+            border: 1px solid #C5E6F2;
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 1.45rem;
+            color: #1F6E8C;
+            border-left: 8px solid #2C9A6E;
+            padding-left: 16px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #EAF9FF, transparent);
+            border-radius: 0 20px 20px 0;
+        }
+
+        /* Quản lý người chơi */
+        .players-manager {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            background: #EFF9FC;
+            padding: 12px 20px;
+            border-radius: 60px;
+            margin-bottom: 20px;
+        }
+        .player-tag {
+            background: linear-gradient(110deg, #289B6F, #1F8A5C);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.05);
+        }
+        .player-tag button {
+            background: none;
+            border: none;
+            color: #C0F0DA;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .add-player-input {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+            flex-wrap: wrap;
+        }
+        input, select, button {
+            font-family: 'K2D', monospace;
+            font-size: 0.9rem;
+            border-radius: 60px;
+            border: none;
+            padding: 8px 18px;
+            outline: none;
+        }
+        input {
+            background: white;
+            border: 1px solid #B9DFEE;
+            transition: 0.1s;
+        }
+        input:focus {
+            border-color: #2C9A6E;
+            box-shadow: 0 0 0 2px rgba(44,154,110,0.2);
+        }
+        button {
+            background: #2C9A6E;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        button:active { transform: scale(0.97); }
+        .btn-outline {
+            background: #E2F0F5;
+            color: #1F6E8C;
+            border: 1px solid #AAD0E2;
+        }
+
+        /* Bảng dữ liệu */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 28px;
+            margin: 15px 0;
+            -webkit-overflow-scrolling: touch;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            min-width: 500px;
+        }
+        th, td {
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 1px solid #D5EDF5;
+            font-weight: 500;
+        }
+        th {
+            background: #E1F2F9;
+            color: #146B4E;
+            font-weight: 700;
+        }
+        td input {
+            width: 115px;
+            text-align: right;
+            background: #FDFFFE;
+            border-radius: 30px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            border: 1px solid #C2E0EB;
+        }
+        @media (max-width: 700px) {
+            td input { width: 100px; padding: 8px 8px; font-size: 0.8rem; }
+            .tab-btn { padding: 6px 18px; font-size: 0.85rem; }
+            .section-title { font-size: 1.25rem; }
+        }
+        .total-row {
+            background: #EAF7F0;
+            font-weight: 800;
+            color: #146B4E;
+        }
+        .delete-row-btn {
+            background: #E66A4C;
+            border-radius: 40px;
+            padding: 5px 12px;
+            font-size: 0.7rem;
+        }
+        .money-positive {
+            color: #1F8A5C;
+            font-weight: 700;
+        }
+        .money-negative {
+            color: #D9534F;
+            font-weight: 700;
+        }
+
+        /* Dashboard */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: linear-gradient(125deg, #E2F3F9, #CAE9F2);
+            border-radius: 32px;
+            padding: 20px 12px;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.03);
+            border: 1px solid #B3DFED;
+        }
+        .big-number {
+            font-size: 1.9rem;
+            font-weight: 800;
+            margin: 8px 0;
+        }
+        .flex-btns {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 12px 0 5px;
+        }
+        footer {
+            text-align: center;
+            color: #1F6E8C;
+            margin-top: 28px;
+            font-weight: 500;
+            background: #E1F2F9;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 6px 18px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+        }
+        i { margin-right: 6px; }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="header">
+        <h1><i class="fas fa-water"></i> Quản lý xoay vòng vốn</h1>
+        <p><i class="fas fa-mobile-alt"></i> Tone xanh dương - xanh lá · Thao tác mượt trên điện thoại</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="dashboard"><i class="fas fa-chart-simple"></i> Dashboard</button>
+        <button class="tab-btn" data-tab="tienlen"><i class="fas fa-cards-blank"></i> Tiến lên</button>
+        <button class="tab-btn" data-tab="xizach"><i class="fas fa-chess-queen"></i> Xì zách / Cào cái</button>
+        <button class="tab-btn" data-tab="loto"><i class="fas fa-dice-d6"></i> Lô tô / Cào zùa</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboardPanel" class="tab-panel active-panel">
+        <div class="card">
+            <div class="section-title"><i class="fas fa-chart-line"></i> Tổng kết tài chính</div>
+            <div class="dashboard-stats" id="dashboardSummaryCards"></div>
+            <div class="table-wrapper">
+                <table id="dashboardTable">
+                    <thead><tr><th>Người chơi</th><th>Số tiền thực lãi/lỗ</th><th>Phân loại</th></tr></thead>
+                    <tbody id="dashboardTbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TIẾN LÊN -->
+    <div id="tienlenPanel" class="tab-panel">
+        <div class="card">
+            <div class="section-title"><i class="fas fa-users"></i> Tiến lên (tối thiểu 2 người)</div>
+            <div class="players-manager" id="tlPlayerManager"></div>
+            <div class="table-wrapper" id="tlTableWrapper"></div>
+            <div class="flex-btns"><button id="tlAddRoundBtn" class="action-button"><i class="fas fa-plus-circle"></i> Thêm ván mới</button></div>
+        </div>
+    </div>
+
+    <!-- XÌ ZÁCH & CÀO CÁI -->
+    <div id="xizachPanel" class="tab-panel">
+        <div class="card">
+            <div class="section-title"><i class="fas fa-crown"></i> Xì zách / Cào cái (Chọn cái mỗi ván)</div>
+            <div class="players-manager" id="xzPlayerManager"></div>
+            <div class="table-wrapper" id="xzTableWrapper"></div>
+            <div class="flex-btns"><button id="xzAddRoundBtn" class="action-button"><i class="fas fa-plus-circle"></i> Thêm ván + chọn cái</button></div>
+        </div>
+    </div>
+
+    <!-- LÔ TÔ & CÀO ZÙA -->
+    <div id="lotoPanel" class="tab-panel">
+        <div class="card">
+            <div class="section-title"><i class="fas fa-trophy"></i> Lô tô / Cào zùa (Một người thắng mỗi ván)</div>
+            <div class="players-manager" id="ltPlayerManager"></div>
+            <div class="table-wrapper" id="ltTableWrapper"></div>
+            <div class="flex-btns"><button id="ltAddRoundBtn" class="action-button"><i class="fas fa-plus-circle"></i> Thêm ván (chọn người thắng & tiền cược)</button></div>
+        </div>
+    </div>
+    <footer><i class="fas fa-calculator"></i> Nhập số tiền có dấu "-" (ví dụ -5000) để trừ · Tự động định dạng xxx.xxx đ · Bàn phím số trên mobile</footer>
+</div>
+
+<script>
+    // ---------- Helper: format tiền & parse thông minh (hỗ trợ dấu âm, dấu chấm) ----------
+    function formatMoney(amount) {
+        if (isNaN(amount)) amount = 0;
+        let sign = amount < 0 ? "-" : "";
+        let absVal = Math.abs(amount);
+        return sign + absVal.toLocaleString('vi-VN') + "đ";
+    }
+
+    function parseMoneyInput(value) {
+        if (!value) return 0;
+        let cleaned = value.toString().replace(/\./g, '').replace(/đ/g, '').trim();
+        let num = parseFloat(cleaned);
+        return isNaN(num) ? 0 : num;
+    }
+
+    // Dữ liệu toàn cục
+    let appData = {
+        tienlen: { players: [], rounds: [] },   // rounds: [{ amounts: {playerName: number} }]
+        xizach: { players: [], rounds: [] },   // rounds: [{ dealer: string, amounts: {} }]
+        loto: { players: [], rounds: [] }      // rounds: [{ betAmount: number, winner: string }]
+    };
+
+    function refreshAll() {
+        renderDashboard();
+        renderTienLen();
+        renderXiZach();
+        renderLoto();
+    }
+
+    // --------------------- TIẾN LÊN -------------------------
+    function renderTienLen() {
+        let data = appData.tienlen;
+        const container = document.getElementById("tlPlayerManager");
+        const tableWrap = document.getElementById("tlTableWrapper");
+        if (!container) return;
+        let playersHtml = `<div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; width:100%;">`;
+        data.players.forEach(p => {
+            playersHtml += `<span class="player-tag">${escapeHtml(p)} <button onclick="removeTlPlayer('${escapeHtml(p)}')"><i class="fas fa-times-circle"></i></button></span>`;
+        });
+        playersHtml += `<div class="add-player-input"><input type="text" id="newTlPlayer" placeholder="Tên người chơi" inputmode="text" /><button id="addTlPlayerBtn"><i class="fas fa-user-plus"></i> Thêm</button></div></div>`;
+        container.innerHTML = playersHtml;
+        document.getElementById("addTlPlayerBtn")?.addEventListener("click", () => {
+            let input = document.getElementById("newTlPlayer");
+            let name = input.value.trim();
+            if (name && !appData.tienlen.players.includes(name)) {
+                appData.tienlen.players.push(name);
+                appData.tienlen.rounds = [];
+                refreshAll();
+            } else if (name) alert("Tên đã tồn tại!");
+            else alert("Nhập tên hợp lệ");
+            input.value = "";
+        });
+
+        if (data.players.length === 0) {
+            tableWrap.innerHTML = `<div class="card" style="background:#E6F4FA;">🌟 Thêm người chơi để bắt đầu ghi nhận ván Tiến lên</div>`;
+            return;
+        }
+
+        let players = data.players;
+        let rounds = data.rounds;
+        let totals = new Array(players.length).fill(0);
+        rounds.forEach(round => {
+            players.forEach((p, idx) => { totals[idx] += (round.amounts[p] || 0); });
+        });
+
+        let html = `<table><thead><tr><th>Ván</th>`;
+        players.forEach(p => html += `<th>${escapeHtml(p)} (đ)</th>`);
+        html += `<th>Xoá</th></tr></thead><tbody>`;
+        rounds.forEach((round, idxRound) => {
+            html += `<tr>`;
+            html += `<td><strong>#${idxRound+1}</strong></td>`;
+            players.forEach(p => {
+                let val = round.amounts[p] || 0;
+                html += `<td><input type="text" inputmode="decimal" class="tl-amount-input" data-round="${idxRound}" data-player="${escapeHtml(p)}" value="${formatMoney(val)}" style="width:110px;"></td>`;
+            });
+            html += `<td><button class="delete-row-btn" data-round="${idxRound}"><i class="fas fa-trash-alt"></i> Xóa</button></td>`;
+            html += `</tr>`;
+        });
+        html += `<tr class="total-row"><td><strong>TỔNG</strong></td>`;
+        players.forEach((p, idx) => {
+            let totalVal = totals[idx];
+            let cls = totalVal >= 0 ? 'money-positive' : 'money-negative';
+            html += `<td class="${cls}">${formatMoney(totalVal)}</td>`;
+        });
+        html += `<td></td></tr></tbody></table>`;
+        tableWrap.innerHTML = html;
+
+        document.querySelectorAll('.tl-amount-input').forEach(inp => {
+            inp.addEventListener('blur', function(e) {
+                let roundIdx = parseInt(this.dataset.round);
+                let playerName = this.dataset.player;
+                let raw = this.value;
+                let numeric = parseMoneyInput(raw);
+                if (isNaN(numeric)) numeric = 0;
+                if (!appData.tienlen.rounds[roundIdx]) return;
+                appData.tienlen.rounds[roundIdx].amounts[playerName] = numeric;
+                refreshAll();
+            });
+        });
+        document.querySelectorAll('.delete-row-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                let roundIdx = parseInt(btn.dataset.round);
+                appData.tienlen.rounds.splice(roundIdx, 1);
+                refreshAll();
+            });
+        });
+    }
+
+    window.removeTlPlayer = (name) => {
+        appData.tienlen.players = appData.tienlen.players.filter(p => p !== name);
+        appData.tienlen.rounds = [];
+        refreshAll();
+    };
+    document.getElementById("tlAddRoundBtn")?.addEventListener("click", () => {
+        if (appData.tienlen.players.length === 0) { alert("Thêm người chơi trước khi thêm ván"); return; }
+        let newAmounts = {};
+        appData.tienlen.players.forEach(p => newAmounts[p] = 0);
+        appData.tienlen.rounds.push({ amounts: newAmounts });
+        refreshAll();
+    });
+
+    // --------------------- XÌ ZÁCH & CÀO CÁI ---------------------
+    function renderXiZach() {
+        let data = appData.xizach;
+        const container = document.getElementById("xzPlayerManager");
+        const tableWrap = document.getElementById("xzTableWrapper");
+        let playersHtml = `<div style="display:flex; flex-wrap:wrap; gap:10px;">`;
+        data.players.forEach(p => {
+            playersHtml += `<span class="player-tag">${escapeHtml(p)} <button onclick="removeXzPlayer('${escapeHtml(p)}')"><i class="fas fa-times-circle"></i></button></span>`;
+        });
+        playersHtml += `<div class="add-player-input"><input type="text" id="newXzPlayer" placeholder="Tên" inputmode="text"/><button id="addXzPlayerBtn"><i class="fas fa-user-plus"></i> Thêm</button></div></div>`;
+        container.innerHTML = playersHtml;
+        document.getElementById("addXzPlayerBtn")?.addEventListener("click", () => {
+            let name = document.getElementById("newXzPlayer").value.trim();
+            if (name && !appData.xizach.players.includes(name)) { appData.xizach.players.push(name); appData.xizach.rounds = []; refreshAll();}
+            else if(name) alert("Trùng tên");
+            document.getElementById("newXzPlayer").value = "";
+        });
+        if (data.players.length === 0) { tableWrap.innerHTML = `<div class="card">🎲 Thêm người chơi để tạo ván Xì zách / Cào cái</div>`; return; }
+
+        let players = data.players;
+        let rounds = data.rounds;
+        let totalMap = new Map();
+        players.forEach(p => totalMap.set(p, 0));
+        totalMap.set("💰 CÁI", 0);
+        rounds.forEach(round => {
+            let sumPlayers = 0;
+            players.forEach(p => {
+                let amt = round.amounts[p] || 0;
+                sumPlayers += amt;
+                totalMap.set(p, (totalMap.get(p)||0) + amt);
+            });
+            let dealerProfit = -sumPlayers;
+            totalMap.set("💰 CÁI", (totalMap.get("💰 CÁI")||0) + dealerProfit);
+        });
+
+        let html = `<table><thead><tr><th>Ván</th><th>Cái</th>`;
+        players.forEach(p => html += `<th>${escapeHtml(p)}</th>`);
+        html += `<th>Tiền Cái</th><th>Xoá</th></tr></thead><tbody>`;
+        rounds.forEach((round, idx) => {
+            let dealer = round.dealer;
+            let sumRound = 0;
+            players.forEach(p => sumRound += (round.amounts[p] || 0));
+            let dealerAmount = -sumRound;
+            html += `<tr>`;
+            html += `<td>${idx+1}</td>`;
+            html += `<td><strong>${escapeHtml(dealer)}</strong></td>`;
+            players.forEach(p => {
+                let val = round.amounts[p] || 0;
+                html += `<td><input type="text" inputmode="decimal" class="xz-amount-input" data-round="${idx}" data-player="${escapeHtml(p)}" value="${formatMoney(val)}" style="width:105px;"></td>`;
+            });
+            html += `<td class="${dealerAmount>=0?'money-positive':'money-negative'}">${formatMoney(dealerAmount)}</td>`;
+            html += `<td><button class="delete-xz-round" data-round="${idx}"><i class="fas fa-trash"></i></button></td>`;
+            html += `</tr>`;
+        });
+        html += `<tr class="total-row"><td colspan="2">TỔNG KẾT</td>`;
+        players.forEach(p => {
+            let val = totalMap.get(p) || 0;
+            html += `<td class="${val>=0?'money-positive':'money-negative'}">${formatMoney(val)}</td>`;
+        });
+        let caiTotal = totalMap.get("💰 CÁI")||0;
+        html += `<td class="${caiTotal>=0?'money-positive':'money-negative'}">${formatMoney(caiTotal)}</td><td></td>`;
+        html += `</tr></tbody></table>`;
+        tableWrap.innerHTML = html;
+
+        document.querySelectorAll('.xz-amount-input').forEach(inp => {
+            inp.addEventListener('blur', function() {
+                let roundIdx = parseInt(this.dataset.round);
+                let player = this.dataset.player;
+                let val = parseMoneyInput(this.value);
+                if (appData.xizach.rounds[roundIdx]) {
+                    appData.xizach.rounds[roundIdx].amounts[player] = val;
+                    refreshAll();
+                }
+            });
+        });
+        document.querySelectorAll('.delete-xz-round').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                let idx = parseInt(btn.dataset.round);
+                appData.xizach.rounds.splice(idx,1);
+                refreshAll();
+            });
+        });
+    }
+
+    window.removeXzPlayer = (name) => {
+        appData.xizach.players = appData.xizach.players.filter(p => p !== name);
+        appData.xizach.rounds = [];
+        refreshAll();
+    };
+    document.getElementById("xzAddRoundBtn")?.addEventListener("click", () => {
+        let players = appData.xizach.players;
+        if (players.length === 0) { alert("Thêm người chơi trước"); return; }
+        let dealer = prompt("Ai làm cái trong ván này? (nhập đúng tên)", players[0]);
+        if (!dealer || !players.includes(dealer)) { alert("Tên cái không hợp lệ, phải có trong danh sách"); return; }
+        let amounts = {};
+        players.forEach(p => amounts[p] = 0);
+        appData.xizach.rounds.push({ dealer: dealer, amounts: amounts });
+        refreshAll();
+    });
+
+    // --------------------- LÔ TÔ & CÀO ZÙA ---------------------
+    function renderLoto() {
+        let data = appData.loto;
+        const container = document.getElementById("ltPlayerManager");
+        const tableWrap = document.getElementById("ltTableWrapper");
+        let playersHtml = `<div style="display:flex; flex-wrap:wrap; gap:10px;">`;
+        data.players.forEach(p => {
+            playersHtml += `<span class="player-tag">${escapeHtml(p)} <button onclick="removeLtPlayer('${escapeHtml(p)}')"><i class="fas fa-times-circle"></i></button></span>`;
+        });
+        playersHtml += `<div class="add-player-input"><input type="text" id="newLtPlayer" placeholder="Tên" inputmode="text"/><button id="addLtPlayerBtn"><i class="fas fa-user-plus"></i> Thêm</button></div></div>`;
+        container.innerHTML = playersHtml;
+        document.getElementById("addLtPlayerBtn")?.addEventListener("click", () => {
+            let name = document.getElementById("newLtPlayer").value.trim();
+            if(name && !appData.loto.players.includes(name)) { appData.loto.players.push(name); appData.loto.rounds = []; refreshAll();}
+            else if(name) alert("Trùng");
+            document.getElementById("newLtPlayer").value = "";
+        });
+        if (data.players.length === 0) { tableWrap.innerHTML = `<div class="card">🌸 Thêm người chơi để quản lý lô tô, cào zùa</div>`; return; }
+
+        let players = data.players;
+        let rounds = data.rounds;
+        let totalMap = new Map();
+        players.forEach(p => totalMap.set(p, 0));
+
+        let html = `<table><thead><tr><th>Ván</th><th>Tiền cược (mỗi người)</th><th>Người thắng</th>`;
+        players.forEach(p => html += `<th>${escapeHtml(p)} (lãi/lỗ)</th>`);
+        html += `<th>Xóa</th></tr></thead><tbody>`;
+        rounds.forEach((round, idx) => {
+            let bet = round.betAmount;
+            let winner = round.winner;
+            let N = players.length;
+            let profitMap = {};
+            players.forEach(p => {
+                let delta = (p === winner) ? (N-1)*bet : -bet;
+                profitMap[p] = delta;
+                totalMap.set(p, (totalMap.get(p)||0) + delta);
+            });
+            html += `<tr>`;
+            html += `<td>${idx+1}</td>`;
+            html += `<td>${formatMoney(bet)}</td>`;
+            html += `<td><strong>🎉 ${escapeHtml(winner)}</strong></td>`;
+            players.forEach(p => {
+                let val = profitMap[p];
+                html += `<td class="${val>=0?'money-positive':'money-negative'}">${formatMoney(val)}</td>`;
+            });
+            html += `<td><button class="delete-lt-round" data-round="${idx}"><i class="fas fa-trash"></i> Xóa</button></td>`;
+            html += `</tr>`;
+        });
+        html += `<tr class="total-row"><td colspan="3">TỔNG LỢI NHUẬN</td>`;
+        players.forEach(p => {
+            let totalVal = totalMap.get(p)||0;
+            html += `<td class="${totalVal>=0?'money-positive':'money-negative'}">${formatMoney(totalVal)}</td>`;
+        });
+        html += `<td></td></tr></tbody></table>`;
+        tableWrap.innerHTML = html;
+
+        document.querySelectorAll('.delete-lt-round').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                let idx = parseInt(btn.dataset.round);
+                appData.loto.rounds.splice(idx,1);
+                refreshAll();
+            });
+        });
+    }
+
+    window.removeLtPlayer = (name) => {
+        appData.loto.players = appData.loto.players.filter(p => p !== name);
+        appData.loto.rounds = [];
+        refreshAll();
+    };
+    document.getElementById("ltAddRoundBtn")?.addEventListener("click", () => {
+        let players = appData.loto.players;
+        if(players.length===0){ alert("Thêm người chơi trước khi đánh lô tô"); return; }
+        let betInput = prompt("Tiền cược mỗi người (VNĐ):", "10000");
+        let bet = parseMoneyInput(betInput);
+        if(isNaN(bet) || bet<=0){ alert("Tiền cược phải là số dương"); return; }
+        let winner = prompt(`Người thắng ván này? (${players.join(", ")})`, players[0]);
+        if(!winner || !players.includes(winner)){ alert("Tên người thắng không hợp lệ"); return; }
+        appData.loto.rounds.push({ betAmount: bet, winner: winner });
+        refreshAll();
+    });
+
+    // --------------------- DASHBOARD tổng hợp ---------------------
+    function renderDashboard() {
+        let allProfits = new Map();
+        // Tiến lên
+        appData.tienlen.rounds.forEach(round => {
+            Object.entries(round.amounts).forEach(([player, val]) => {
+                allProfits.set(player, (allProfits.get(player)||0) + val);
+            });
+        });
+        // Xì zách
+        appData.xizach.rounds.forEach(round => {
+            let dealer = round.dealer;
+            let sumPlayer = 0;
+            Object.entries(round.amounts).forEach(([player, val]) => {
+                sumPlayer += val;
+                allProfits.set(player, (allProfits.get(player)||0) + val);
+            });
+            allProfits.set(dealer, (allProfits.get(dealer)||0) - sumPlayer);
+        });
+        // Loto
+        appData.loto.rounds.forEach(round => {
+            let bet = round.betAmount;
+            let winner = round.winner;
+            let N = appData.loto.players.length;
+            if(N===0) return;
+            appData.loto.players.forEach(p => {
+                let delta = (p === winner) ? (N-1)*bet : -bet;
+                allProfits.set(p, (allProfits.get(p)||0) + delta);
+            });
+        });
+        let sorted = Array.from(allProfits.entries()).sort((a,b)=>b[1]-a[1]);
+        let totalWin = 0, totalLoss = 0;
+        sorted.forEach(([_,val]) => { if(val>0) totalWin+=val; else totalLoss+=Math.abs(val); });
+        document.getElementById("dashboardSummaryCards").innerHTML = `
+            <div class="stat-card"><i class="fas fa-arrow-up"></i><div class="big-number money-positive">${formatMoney(totalWin)}</div><div>Tổng tiền thắng</div></div>
+            <div class="stat-card"><i class="fas fa-arrow-down"></i><div class="big-number money-negative">${formatMoney(totalLoss)}</div><div>Tổng tiền thua</div></div>
+            <div class="stat-card"><i class="fas fa-user-friends"></i><div class="big-number">${sorted.length}</div><div>Người chơi</div></div>
+        `;
+        let tbody = document.getElementById("dashboardTbody");
+        tbody.innerHTML = "";
+        sorted.forEach(([name, val]) => {
+            let cls = val>=0 ? 'money-positive' : 'money-negative';
+            tbody.innerHTML += `<tr><td><strong>${escapeHtml(name)}</strong></td><td class="${cls}">${formatMoney(val)}</td><td>${val>=0 ? '🏆 Đang thắng' : '📉 Đang thua'}</td></tr>`;
+        });
+        if(sorted.length===0) tbody.innerHTML = "<tr><td colspan='3'>Chưa có dữ liệu ván chơi</td></tr>";
+    }
+
+    function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    // CHUYỂN TAB
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panels = {
+        dashboard: document.getElementById("dashboardPanel"),
+        tienlen: document.getElementById("tienlenPanel"),
+        xizach: document.getElementById("xizachPanel"),
+        loto: document.getElementById("lotoPanel")
+    };
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            let tabId = btn.dataset.tab;
+            tabs.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            Object.values(panels).forEach(panel => panel.classList.remove('active-panel'));
+            if(panels[tabId]) panels[tabId].classList.add('active-panel');
+            refreshAll();
+        });
+    });
+    refreshAll();
+</script>
+</body>
+</html>
